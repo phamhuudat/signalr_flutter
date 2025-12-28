@@ -30,8 +30,8 @@ class _MyAppState extends State<MyApp> {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     signalR = SignalR(
-      "https://gateway.fpts.com.vn/hnx/signalr/hubs",
-      "HubHNX2",
+      "my_hub_url",
+      "my_hub_name",
       hubMethods: ["updateSS"],
       statusChangeCallback: _onStatusChange,
       hubCallback: _onNewMessage,
