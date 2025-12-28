@@ -1,10 +1,10 @@
 // ignore_for_file: avoid_print
 
-import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:signalr_flutter/signalr_api.dart';
-import 'package:signalr_flutter/signalr_flutter.dart';
+import 'package:flutter/material.dart';
+import 'package:signalr_multi_connect/signalr_api.dart';
+import 'package:signalr_multi_connect/signalr_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,12 +30,13 @@ class _MyAppState extends State<MyApp> {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     signalR = SignalR(
-      "<Your server url here>",
-      "<Your hub name here>",
-      hubMethods: ["<Your Hub Method Names>"],
+      "https://gateway.fpts.com.vn/hnx/signalr/hubs",
+      "HubHNX2",
+      hubMethods: ["updateSS"],
       statusChangeCallback: _onStatusChange,
       hubCallback: _onNewMessage,
     );
+    signalR.connect();
   }
 
   @override
@@ -45,23 +46,20 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text("SignalR Plugin Example App"),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Connection Status: $signalRStatus\n",
-              style: Theme.of(context).textTheme.titleLarge,
-              textAlign: TextAlign.center,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: ElevatedButton(
-                onPressed: _buttonTapped,
-                child: const Text("Invoke Method"),
-              ),
-            )
-          ],
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Connection Status: $signalRStatus\n",
+                  style: Theme.of(context).textTheme.headlineMedium),
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: ElevatedButton(
+                    onPressed: _buttonTapped,
+                    child: const Text("Invoke Method")),
+              )
+            ],
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.cast_connected),
@@ -79,7 +77,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void _onStatusChange(ConnectionStatus? status) {
+  void _onStatusChange(ConnectionStatus? status, String? connectionId) {
     if (mounted) {
       setState(() {
         signalRStatus = status?.name ?? ConnectionStatus.disconnected.name;
@@ -93,10 +91,8 @@ class _MyAppState extends State<MyApp> {
 
   void _buttonTapped() async {
     try {
-      final result = await signalR.invokeMethod(
-        "<Your Method Name>",
-        arguments: ["<Your Method Arguments>"],
-      );
+      final result = await signalR.invokeMethod("<Your Method Name>",
+          arguments: ["<Your Method Arguments>"]);
       print(result);
     } catch (e) {
       print(e);

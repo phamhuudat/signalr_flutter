@@ -4,14 +4,7 @@ import 'package:pigeon/pigeon.dart';
 enum Transport { auto, serverSentEvents, longPolling }
 
 /// SignalR connection status
-enum ConnectionStatus {
-  connecting,
-  connected,
-  reconnecting,
-  disconnected,
-  connectionSlow,
-  connectionError
-}
+enum ConnectionStatus { connecting, connected, reconnecting, disconnected, connectionSlow, connectionError }
 
 class ConnectionOptions {
   String? baseUrl;
@@ -20,6 +13,7 @@ class ConnectionOptions {
   List<String?>? hubMethods;
   Map<String?, String?>? headers;
   Transport? transport;
+  String? connectionId;
 }
 
 class StatusChangeResult {
@@ -34,16 +28,16 @@ abstract class SignalRHostApi {
   String connect(ConnectionOptions connectionOptions);
 
   @async
-  String reconnect();
+  String reconnect(String connectionId);
 
   @async
-  void stop();
+  void stop(String connectionId);
 
   @async
-  bool isConnected();
+  bool isConnected(String connectionId);
 
   @async
-  String invokeMethod(String methodName, List<String?> arguments);
+  String invokeMethod(String methodName, String connectionId,List<String?> arguments);
 }
 
 @FlutterApi()
@@ -52,7 +46,7 @@ abstract class SignalRPlatformApi {
   void onStatusChange(StatusChangeResult statusChangeResult);
 
   @async
-  void onNewMessage(String hubName, String message);
+  void onNewMessage(String hubName, String message, String connectionId);
 }
 
 void configurePigeon(PigeonOptions opts) {

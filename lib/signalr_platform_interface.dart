@@ -1,4 +1,4 @@
-import 'package:signalr_flutter/signalr_api.dart';
+import 'package:signalr_multi_connect/signalr_api.dart';
 
 abstract class SignalrPlatformInterface {
   SignalrPlatformInterface(this.baseUrl, this.hubName,
@@ -20,12 +20,15 @@ abstract class SignalrPlatformInterface {
   final Map<String, String>? headers;
 
   String? connectionId;
+  ///
+  /// connectionId send to native
+  String? connectionIdSend;
 
   /// List of Hub method names you want to subscribe. Every subsequent message from server gets called on [hubCallback].
   final List<String>? hubMethods;
 
   /// This callback gets called whenever SignalR connection status with server changes.
-  final void Function(ConnectionStatus?)? statusChangeCallback;
+  final void Function(ConnectionStatus?, String?)? statusChangeCallback;
 
   /// This callback gets called whenever SignalR server sends some message to client.
   final void Function(String, String)? hubCallback;
